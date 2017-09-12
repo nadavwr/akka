@@ -19,10 +19,10 @@ import scala.runtime.AbstractFunction2
  */
 @SerialVersionUID(1L)
 class Member private[cluster] (
-  val uniqueAddress:             UniqueAddress,
+  val uniqueAddress: UniqueAddress,
   private[cluster] val upNumber: Int, // INTERNAL API
-  val status:                    MemberStatus,
-  val roles:                     Set[String]) extends Serializable {
+  val status: MemberStatus,
+  val roles: Set[String]) extends Serializable {
 
   lazy val dataCenter: DataCenter = roles.find(_.startsWith(ClusterSettings.DcRolePrefix))
     .getOrElse(throw new IllegalStateException("DataCenter undefined, should not be possible"))
@@ -61,6 +61,7 @@ class Member private[cluster] (
    * method will throw `IllegalArgumentException` if the members belong
    * to different data centers.
    */
+  @throws[IllegalArgumentException]("if members from different data centers")
   def isOlderThan(other: Member): Boolean = {
     if (dataCenter != other.dataCenter)
       throw new IllegalArgumentException(
